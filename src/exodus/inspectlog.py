@@ -1,13 +1,13 @@
-"""Local request/response INSPECTION log — opt-in, DEBUG ONLY.
+"""Local request/response inspection log: opt-in, for debugging only.
 
-⚠️ Unlike the audit trail (which records kinds, NEVER values), this captures FULL
-PLAINTEXT of both sides of YOUR OWN exchange — what you wrote, what was sent to the
-cloud (after masking), and what Claude Code received (after restoration). Its only
-purpose is to let you VERIFY Exodus on your own traffic.
+Unlike the audit trail (which records kinds, never values), this captures full
+plaintext of both sides of your own exchange: what you wrote, what was sent to the
+cloud (after masking), and what the client received (after restoration). Its only
+purpose is to let you verify Exodus on your own traffic.
 
 Rules:
   * OFF by default (enable with EXODUS_INSPECT=on).
-  * The file contains secrets in clear text → it is git-ignored; delete it when done.
+  * The file contains secrets in clear text, so it is git-ignored; delete it when done.
   * Do NOT use this to capture anyone else's session without their consent. That would
     be surveillance, which Exodus is not for.
 """

@@ -1,6 +1,6 @@
-"""L6 — Transparent audit trail.
+"""Transparent audit trail.
 
-Records WHAT Exodus did (kind + action + when) — NEVER the real values. The audit
+Records what Exodus did (kind + action + when), never the real values. The audit
 file is safe to read and to share: it proves the firewall is working without
 leaking anything it protected. One JSON object per line (JSONL).
 """

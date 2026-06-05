@@ -1,8 +1,8 @@
-"""L5 — Local model runtime. Ollama now; MLX later.
+"""Local model runtime. Ollama now; MLX later.
 
 Pure local inference used for contextual sensitivity classification and
-abstraction. Knows nothing about HTTP/proxy concerns. On the target machine
-(MacBook Air M5, 32 GB) a 7B instruct model runs comfortably.
+abstraction. Knows nothing about HTTP/proxy concerns. On recent Apple-silicon
+hardware a 7B instruct model runs comfortably.
 """
 from __future__ import annotations
 
@@ -18,11 +18,11 @@ class OllamaRuntime:
         self.timeout = timeout
 
     def available(self) -> bool:
-        """True only if the Ollama server answers AND the configured model is pulled.
+        """True only if the Ollama server answers and the configured model is pulled.
 
-        Checking the MODEL (not just the server) matters: if the model is missing,
-        we report unavailable so the M4 layer is SKIPPED (the deterministic firewall
-        still protects), instead of every generate() failing and INV-4 blocking ALL
+        Checking the model (not just the server) matters: if the model is missing,
+        we report unavailable so the local pass is skipped (the deterministic firewall
+        still protects), instead of every generate() failing and INV-4 blocking all
         content. INV-4 is reserved for genuine mid-flight failures, not misconfig.
         """
         try:

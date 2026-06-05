@@ -1,13 +1,13 @@
-"""L5 (embedded) — In-process local model via llama.cpp (GGUF). NO Ollama required.
+"""In-process local model via llama.cpp (GGUF). No separate daemon required.
 
-This is the DEFAULT M4 backend so end users don't install or run a separate daemon:
-it embeds a small instruct model *inside* the Exodus process using llama-cpp-python.
+This is the default local-model backend, so end users don't run a separate service:
+it loads a small instruct model inside the Exodus process using llama-cpp-python.
 The weights (a single GGUF) download once from the Hugging Face Hub and cache locally;
-after that it's fully offline and on-device.
+after that it runs offline and on-device.
 
-Optional dependency — activate with:  pip install -e ".[local]"
-If llama-cpp-python is absent (or the download fails), ``available()`` returns False
-and the M4 layer is SKIPPED — the deterministic firewall (regex + validators) still
+Optional dependency, enabled with:  pip install -e ".[local]"
+If llama-cpp-python is absent (or the download fails) ``available()`` returns False
+and the local pass is skipped; the deterministic firewall (regex + validators) still
 protects. Same duck-typed interface as ``OllamaRuntime``: available() + generate().
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ import os
 
 _log = logging.getLogger("exodus.embedded")
 
-# Small + multilingual by default ("para todo el mundo"): Qwen2.5-1.5B-Instruct (~1 GB q4).
+# Small, multilingual default: Qwen2.5-1.5B-Instruct (~1 GB q4).
 _DEFAULT_REPO = "Qwen/Qwen2.5-1.5B-Instruct-GGUF"
 _DEFAULT_FILE = "*q4_k_m.gguf"
 
@@ -42,12 +42,11 @@ class LlamaCppRuntime:
         from llama_cpp import Llama  # optional dep; ImportError handled by available()
 
         if self.model_path:
-            _log.warning("🧠 Cargando modelo embebido desde %s …", self.model_path)
+            _log.warning("loading embedded model from %s", self.model_path)
             self._llm = Llama(model_path=self.model_path, n_ctx=self.n_ctx, verbose=False)
         else:
             _log.warning(
-                "🧠 Preparando modelo local embebido (%s) — la primera vez se descarga UNA vez, "
-                "luego es 100%% offline en tu máquina…",
+                "preparing embedded model (%s); downloaded once on first run, then offline",
                 self.repo_id,
             )
             self._llm = Llama.from_pretrained(
@@ -56,10 +55,10 @@ class LlamaCppRuntime:
         return self._llm
 
     def available(self) -> bool:
-        """True only once the embedded model is actually loaded.
+        """True once the embedded model is actually loaded.
 
-        Returning False (not raising) when the optional dep or the download is missing
-        means the M4 layer is SKIPPED rather than INV-4-blocked.
+        Returns False (rather than raising) when the optional dependency or the
+        download is missing, so the local pass is skipped instead of failing closed.
         """
         try:
             import llama_cpp  # noqa: F401
@@ -69,7 +68,7 @@ class LlamaCppRuntime:
             self._ensure_loaded()
             return True
         except Exception:
-            _log.warning("Modelo embebido no disponible (descarga/carga falló) — M4 se omite.")
+            _log.warning("embedded model unavailable (download/load failed); local pass skipped")
             return False
 
     def generate(self, system: str, prompt: str) -> str:

@@ -3,7 +3,7 @@
 > Un **enrutador de privacidad local y consciente de la sensibilidad** para clientes LLM
 > agénticos — Claude Code y Codex.
 
-**Licencia:** MIT · **Estado:** funcional (M0–M4 · 46 tests en verde) · **Idioma:** la versión
+**Licencia:** MIT · **Estado:** funcional · 51 tests en verde · **Idioma:** la versión
 **canónica es la inglesa** → [`README.md`](../README.md).
 
 Exodus corre en tu propia máquina, entre tu agente de IA y la API en la nube, y **minimiza
@@ -23,7 +23,7 @@ Exodus es **reducción de daño, no invisibilidad.** No vende una promesa imposi
   estructurada que **valida** (tarjetas por Luhn, IBAN por mod-97, DNI/NIE, SSN). Una cadena
   aleatoria sin firma *no* es detectable como secreto.
 - **No** oculta tu identidad/metadatos — el proveedor sigue sabiendo que es tu cuenta.
-- La capa de modelo local (M4) es **con pérdida**: quita identificadores del texto libre,
+- La capa de modelo local es **con pérdida**: quita identificadores del texto libre,
   pero el sentido general sigue saliendo.
 - **Apps GUI de consumidor (Claude Desktop, ChatGPT) quedan fuera** — Exodus protege el
   *bucle agéntico / de API* (CLIs, SDKs), la superficie de alto riesgo.
@@ -38,7 +38,7 @@ Modelo de amenaza completo: [`threat-model.md`](threat-model.md).
 # Instalar (en un venv)
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .                 # firewall núcleo — sin modelo, sin Ollama
-pip install -e ".[local]"        # opcional: modelo local embebido (capa M4)
+pip install -e ".[local]"        # opcional: modelo local embebido (capa de texto libre)
 
 # Arrancar
 exodus serve                     # escucha en http://127.0.0.1:8787
@@ -70,11 +70,39 @@ exodus audit                     # tipos + acciones enmascaradas — nunca los v
 - **PII estructurada validada** (enmascarada por defecto): tarjetas (Luhn) · IBAN (mod-97) ·
   DNI/NIE · SSN.
 - **PII de contacto** (detectada, opt-in): email · IPv4 · teléfono internacional.
-- **Texto libre** (nombres, direcciones, cualquier idioma) → la **capa de modelo local** (M4).
+- **Texto libre** (nombres, direcciones, cualquier idioma) → la **capa de modelo local**.
 
 ---
 
-## Modelo local (M4, opcional)
+## Prueba que funciona
+
+Un autotest integrado pasa una muestra **falsa** de cada tipología por el pipeline real y
+verifica tres cosas: que se detecta, que su valor nunca aparece en la petición que sale, y
+que la bóveda local restaura los bytes originales exactos.
+
+```bash
+exodus selftest
+```
+
+```text
+  26 kinds · 23 masked by default · 3 detected/opt-in · every value is FAKE
+
+  anthropic_key   sk-ant-api03-FAKEdemoEXOD…  mask     ⟪EXODUS:anthropic_key:1⟫   ✓ masked · restored
+  credit_card     4242 4242 4242 4242         mask     ⟪EXODUS:credit_card:1⟫     ✓ masked · restored
+  iban            DE89 3704 0044 0532 0130 …  mask     ⟪EXODUS:iban:1⟫            ✓ masked · restored
+  us_ssn          123-45-6789                 mask     ⟪EXODUS:us_ssn:1⟫          ✓ masked · restored
+  email           alice@example.com           forward  alice@example.com          · detectado · opt-in
+  …                                                                  (26 tipologías en total)
+
+  PASS  23/23 valores protegidos enmascarados y restaurados exactos · 0 filtrados
+```
+
+Todos los valores son sintéticos (tokens de test documentados, identificadores reservados
+para docs). La misma matriz corre en la suite de tests.
+
+---
+
+## Modelo local (opcional)
 
 Para contenido sensible *sin firma*, Exodus corre un modelo pequeño **embebido en el proceso**
 (llama.cpp + GGUF — **sin Ollama**), que clasifica y abstrae en local. Apagado por defecto.

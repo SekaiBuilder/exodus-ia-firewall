@@ -2,12 +2,12 @@
 
 Two passes run over the Anthropic Messages JSON before egress:
 
-1. ``contextual_pass``       (M4, OPTIONAL) — local-model minimization of sensitive
-   USER prose (abstraction). One-way / lossy. Runs only when a runtime is provided.
-2. ``sanitize_request_body`` (M2/M3)        — deterministic secret/PII firewall driven
-   by policy (forward / pseudonymize / block). Reversible for pseudonymize.
+1. ``contextual_pass`` (optional) — local-model minimization of sensitive user prose
+   (abstraction). One-way and lossy. Runs only when a runtime is provided.
+2. ``sanitize_request_body`` — deterministic secret/PII firewall driven by policy
+   (forward / pseudonymize / block). Reversible for pseudonymize.
 
-In the proxy, pass 1 runs FIRST (on raw prose), then pass 2 adds the reversible
+In the proxy, pass 1 runs first (on raw prose), then pass 2 adds the reversible
 placeholders — so response restoration only ever deals with pass 2's vault.
 Non-JSON bodies pass through both untouched.
 """
@@ -92,7 +92,7 @@ def _min_content(content, runtime, min_tier: Sensitivity, statuses: list[str]):
 
 
 def contextual_pass(body: bytes, runtime, min_tier: Sensitivity = Sensitivity.MEDIUM):
-    """Abstract sensitive prose in USER messages via the local model.
+    """Abstract sensitive prose in user messages via the local model.
 
     Returns ``(new_body, statuses)``. Synchronous — wrap in a worker thread when
     calling from async code. Non-JSON/empty bodies pass through untouched.

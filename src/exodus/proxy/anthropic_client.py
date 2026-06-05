@@ -1,11 +1,11 @@
-"""L0 — Upstream forwarder to api.anthropic.com.
+"""Upstream forwarder to api.anthropic.com.
 
-The ONLY component allowed to open a connection past the trust boundary. It holds a
+The only component allowed to open a connection past the trust boundary. It holds a
 shared ``httpx.AsyncClient`` and forwards requests upstream in streaming mode so that
 Server-Sent Events (SSE) are relayed chunk-by-chunk without buffering.
 
-M1 is a *transparent* forwarder: it does not inspect or mutate bodies. The privacy
-pipeline is layered on top in M2 — this module stays dumb on purpose.
+This is a *transparent* forwarder: it does not inspect or mutate bodies. The privacy
+pipeline is layered on top elsewhere; this module stays simple on purpose.
 """
 from __future__ import annotations
 
@@ -20,8 +20,8 @@ REQUEST_DROP_HEADERS: frozenset[str] = frozenset({
     "transfer-encoding", "upgrade",
 })
 RESPONSE_DROP_HEADERS: frozenset[str] = frozenset({
-    # content-encoding is dropped because M2 streams the DECODED body (aiter_bytes)
-    # so it can restore placeholders; re-emitting it decompressed.
+    # content-encoding is dropped because we stream the decoded body (aiter_bytes)
+    # to restore placeholders, then re-emit it decompressed.
     "content-length", "content-encoding", "transfer-encoding", "connection",
     "keep-alive", "te", "trailers", "upgrade", "proxy-authenticate", "proxy-authorization",
 })
@@ -62,5 +62,5 @@ class Upstream:
         )
 
     async def send(self, request: httpx.Request) -> httpx.Response:
-        """Send in streaming mode. Caller MUST ``aclose()`` the returned response."""
+        """Send in streaming mode. Caller must ``aclose()`` the returned response."""
         return await self._client.send(request, stream=True)

@@ -4,8 +4,8 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Tests](https://img.shields.io/badge/tests-46%20passing-brightgreen)
-![Status](https://img.shields.io/badge/status-M0--M4%20working-success)
+![Tests](https://img.shields.io/badge/tests-51%20passing-brightgreen)
+![Status](https://img.shields.io/badge/status-working-success)
 
 **🌐 English (primary)** · [Español](esp/README.md)
 
@@ -26,7 +26,7 @@ Exodus is **harm reduction, not invisibility.** It does not sell an impossible p
   JWTs…) and structured PII that **validates** (credit cards via Luhn, IBAN via mod-97,
   DNI/NIE, SSN). A random string with no signature is *not* detectable as a secret.
 - It does **not** hide your identity/metadata — the provider still knows it's your account.
-- The optional local-model layer (M4) is **lossy**: it strips identifiers from free text,
+- The optional local-model layer is **lossy**: it strips identifiers from free text,
   but the general meaning still leaves the machine.
 - **GUI consumer apps (Claude Desktop, ChatGPT app) are out of scope** — Exodus protects
   the *agentic / API loop* (CLIs, SDKs), the high-risk surface where an agent autonomously
@@ -61,7 +61,7 @@ Requires Python ≥ 3.11.
 git clone <repo-url> exodus && cd exodus
 python -m venv .venv && source .venv/bin/activate
 pip install -e .                 # core firewall — zero model, zero Ollama
-pip install -e ".[local]"        # optional: embedded local model (M4 free-text layer)
+pip install -e ".[local]"        # optional: embedded local model (free-text layer)
 ```
 
 ---
@@ -130,7 +130,40 @@ an unknown kind is treated as a secret.
 
 ---
 
-## Optional local model (M4)
+## Proof it works
+
+A built-in self-test runs a **fake** sample of every detector kind through the real
+pipeline and verifies three things: the kind is detected, its value never appears in the
+outgoing request, and the local vault restores the original bytes exactly.
+
+```bash
+exodus selftest
+```
+
+```text
+  Exodus self-test — every detector kind on synthetic data
+  26 kinds · 23 masked by default · 3 detected/opt-in · every value is FAKE
+
+  KIND                 EXAMPLE (fake)             DEFAULT  WHAT THE CLOUD SEES          STATUS
+  ──────────────────────────────────────────────────────────────────────────────────────────
+  anthropic_key        sk-ant-api03-FAKEdemoEXOD… mask     ⟪EXODUS:anthropic_key:1⟫     ✓ masked · restored
+  aws_access_key       AKIAFAKEDEMO0123ABCD       mask     ⟪EXODUS:aws_access_key:1⟫    ✓ masked · restored
+  github_pat           github_pat_FAKEdemoEXODUS… mask     ⟪EXODUS:github_pat:1⟫        ✓ masked · restored
+  credit_card          4242 4242 4242 4242        mask     ⟪EXODUS:credit_card:1⟫       ✓ masked · restored
+  iban                 DE89 3704 0044 0532 0130 … mask     ⟪EXODUS:iban:1⟫              ✓ masked · restored
+  us_ssn               123-45-6789                mask     ⟪EXODUS:us_ssn:1⟫            ✓ masked · restored
+  email                alice@example.com          forward  alice@example.com            · detected · opt-in
+  …                                                                          (26 kinds total)
+
+  PASS  23/23 protected values masked and restored exactly · 0 leaked to egress
+```
+
+Every value is synthetic (documented test tokens, reserved-for-docs identifiers). The same
+matrix runs in the test suite, so adding a detector without coverage fails the tests.
+
+---
+
+## Optional local model
 
 For sensitive content with *no signature*, Exodus runs a small model **embedded in-process**
 (llama.cpp + a GGUF — **no Ollama daemon**) to classify and abstract it. Off by default; the
@@ -159,14 +192,14 @@ Copy `.env.example` → `.env`. Key variables:
 | `EXODUS_UPSTREAM` | provider API to forward to (Anthropic default; `https://api.openai.com` for Codex) |
 | `EXODUS_HOST` / `EXODUS_PORT` | where Exodus listens (default `127.0.0.1:8787`) |
 | `EXODUS_POLICY_FILE` | your policy YAML |
-| `EXODUS_LOCAL_MODEL` / `EXODUS_LOCAL_BACKEND` | enable + choose the M4 backend |
+| `EXODUS_LOCAL_MODEL` / `EXODUS_LOCAL_BACKEND` | enable + choose the local-model backend |
 | `EXODUS_INSPECT` | debug log of your own traffic (full plaintext; off by default) |
 
 ---
 
 ## Tests
 ```bash
-pip install -e ".[dev]" && pytest        # 46 passing
+pip install -e ".[dev]" && pytest        # 51 passing
 ```
 
 ---

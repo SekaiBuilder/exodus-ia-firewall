@@ -1,12 +1,12 @@
-"""Contextual minimization pass (M4) — the OPTIONAL local-model layer.
+"""Contextual minimization: the optional local-model pass.
 
 Sits on top of the deterministic secret firewall. For a piece of prose it asks the
 local model "how sensitive is this?" and, if it crosses a threshold, rewrites it to
-a less-identifying form. The deterministic firewall (M2/M3) still handles secrets;
+a less-identifying form. The deterministic firewall still handles secrets;
 this layer handles *contextual* sensitivity that regex cannot see.
 
-INV-4 (fail-closed): once we ENGAGE the local model and it fails mid-flight, we
-BLOCK the content rather than forward it raw. If the model is simply unavailable
+INV-4 (fail-closed): once we engage the local model and it fails mid-flight, we
+block the content rather than forward it raw. If the model is simply unavailable
 from the start, the layer is skipped (the deterministic firewall still applies).
 """
 from __future__ import annotations

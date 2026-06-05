@@ -1,4 +1,4 @@
-"""L4 — Local abstraction / minimization.
+"""Local abstraction / minimization.
 
 Uses the local model to rewrite a sensitive span into a less-identifying but still
 useful form. LOSSY and honest: the abstracted facts STILL leave the machine — this

@@ -1,4 +1,4 @@
-"""L3 — Policy engine. Decides, configurably, what happens to each detection.
+"""Policy engine. Decides, configurably, what happens to each detection.
 
 The decision chain is:   kind  ->  sensitivity tier  ->  action
 
@@ -19,7 +19,7 @@ class Action(str, Enum):
     FORWARD = "forward"            # leave as-is (not sensitive enough to touch)
     PSEUDONYMIZE = "pseudonymize"  # reversible placeholder (restored on the way back)
     BLOCK = "block"                # non-reversible redaction (value never comes back)
-    # ABSTRACT / LOCAL actions arrive in M4 (they need the local model).
+    # ABSTRACT / LOCAL actions are handled by the local-model pass.
 
 
 # Defaults: every known secret is SECRET; PII starts as PUBLIC (off) until you opt in.
@@ -57,8 +57,8 @@ _DEFAULT_KIND_TIERS: dict[str, Sensitivity] = {
 _DEFAULT_TIER_ACTIONS: dict[Sensitivity, Action] = {
     Sensitivity.PUBLIC: Action.FORWARD,
     Sensitivity.LOW: Action.PSEUDONYMIZE,
-    Sensitivity.MEDIUM: Action.PSEUDONYMIZE,  # becomes ABSTRACT in M4
-    Sensitivity.HIGH: Action.PSEUDONYMIZE,    # becomes LOCAL in M4
+    Sensitivity.MEDIUM: Action.PSEUDONYMIZE,  # abstracted by the local pass when enabled
+    Sensitivity.HIGH: Action.PSEUDONYMIZE,    # handled by the local pass when enabled
     Sensitivity.SECRET: Action.PSEUDONYMIZE,
 }
 

@@ -1,8 +1,8 @@
-"""L4 — Reversible pseudonymization + local vault + stream-safe restoration.
+"""Reversible pseudonymization + local vault + stream-safe restoration.
 
 Sensitive values are replaced by stable, unique placeholder tokens wrapped in
 U+27EA / U+27EB sentinels (⟪ … ⟫): rare in code, easy to detect, chosen to survive
-SSE chunking. The vault (placeholder <-> real) NEVER leaves the machine and is
+SSE chunking. The vault (placeholder <-> real) never leaves the machine and is
 restored on the response path. For the agentic edit loop, restoration is byte-exact.
 """
 from __future__ import annotations

@@ -1,13 +1,13 @@
-"""L0 — Transport + privacy-pipeline integration.
+"""Transport and privacy-pipeline integration for the proxy.
 
-M1: transparent reverse proxy.
-M2: secret firewall (pseudonymize secrets before egress, restore on the way back).
-M3: policy engine (user-owned ``EXODUS_POLICY_FILE``) + transparent audit trail.
-M4: OPTIONAL local-model contextual pass (``EXODUS_LOCAL_MODEL=on``).
+The reverse proxy forwards each client request upstream. Before egress it
+pseudonymizes secrets (and restores them on the response), applies the configurable
+policy engine (``EXODUS_POLICY_FILE``), and writes an audit trail. An optional
+local-model pass (``EXODUS_LOCAL_MODEL=on``) abstracts sensitive free text first.
 
-Optional INSPECTION log (``EXODUS_INSPECT=on``) records full plaintext of both sides
-of YOUR OWN exchange for debugging/verification — see ``exodus.inspectlog`` (off by
-default; the file holds secrets and is git-ignored).
+An optional inspection log (``EXODUS_INSPECT=on``) records full plaintext of both
+sides of your own exchange for debugging; see ``exodus.inspectlog`` (off by default,
+git-ignored, holds secrets in clear).
 """
 from __future__ import annotations
 
@@ -58,8 +58,8 @@ def _load_runtime():
         hint = 'install the embedded model with: pip install -e ".[local]"'
     if not rt.available():
         _log.warning(
-            "EXODUS_LOCAL_MODEL is on but the '%s' backend is unavailable — the M4 layer "
-            "will be SKIPPED (the deterministic firewall still protects). %s",
+            "EXODUS_LOCAL_MODEL is on but the '%s' backend is unavailable; the local "
+            "pass will be skipped (the deterministic firewall still protects). %s",
             backend,
             hint,
         )
@@ -75,15 +75,15 @@ def create_app() -> FastAPI:
         app.state.inspect = os.getenv("EXODUS_INSPECT", "").lower() in _TRUE
         if app.state.inspect:
             _log.warning(
-                "⚠️  EXODUS_INSPECT is ON — FULL PLAINTEXT (incl. secrets) is being written "
-                "to %s. Debug/verification only, on YOUR traffic. Delete the file when done.",
+                "EXODUS_INSPECT is on: full plaintext (incl. secrets) is being written "
+                "to %s. Debugging/verification only, on your own traffic. Delete it when done.",
                 inspectlog.inspect_path(),
             )
         app.state.no_restore = os.getenv("EXODUS_NO_RESTORE", "").lower() in _TRUE
         if app.state.no_restore:
             _log.warning(
-                "🧪 EXODUS_NO_RESTORE is ON — responses are NOT un-masked; the client will see "
-                "the placeholders the cloud actually received (PROOF MODE). Off for normal use."
+                "EXODUS_NO_RESTORE is on: responses are not un-masked; the client will see "
+                "the placeholders the cloud actually received. Turn off for normal use."
             )
         try:
             yield
@@ -94,7 +94,7 @@ def create_app() -> FastAPI:
 
     @app.get("/_exodus/health")
     async def health() -> dict:
-        return {"status": "ok", "stage": "M4-local-model"}
+        return {"status": "ok"}
 
     @app.api_route("/{path:path}", methods=_PROXY_METHODS)
     async def proxy(path: str, request: Request) -> StreamingResponse:
@@ -108,17 +108,17 @@ def create_app() -> FastAPI:
         original_body = await request.body()
         body = original_body
 
-        # --- M4 (optional): local-model abstraction of sensitive USER prose. ---
+        # Optional local-model pass: abstract sensitive free-text prose.
         if runtime is not None:
             body, statuses = await asyncio.to_thread(contextual_pass, body, runtime)
             if any(not s.startswith("forwarded") for s in statuses):
-                _log.warning("🧠 Exodus local pass: %s", dict(Counter(statuses)))
+                _log.warning("local pass: %s", dict(Counter(statuses)))
 
-        # --- M2+M3: deterministic policy firewall (reversible) BEFORE egress. ---
+        # Deterministic policy firewall (reversible), applied before egress.
         sanitized, vault, applied = sanitize_request_body(body, policy)
         if applied:
             summary = dict(Counter(f"{kind}:{action}" for kind, action in applied))
-            _log.warning("🔒 Exodus acted on %d item(s) before upstream: %s", len(applied), summary)
+            _log.warning("masked %d item(s) before upstream: %s", len(applied), summary)
             audit.write(audit.AuditRecord.now(rid, kind, action) for kind, action in applied)
 
         up_req = upstream.build_request(
@@ -138,8 +138,8 @@ def create_app() -> FastAPI:
         async def body_iter():
             try:
                 async for chunk in up_resp.aiter_bytes():  # decoded (decompressed)
-                    # Proof mode (no_restore): pass the cloud's bytes through untouched, so the
-                    # client sees the placeholders the cloud actually received.
+                    # Proof mode: forward the upstream bytes untouched so the client
+                    # sees the placeholders the cloud actually received.
                     out = chunk if restorer is None else restorer.feed(chunk)
                     if out:
                         if captured is not None:

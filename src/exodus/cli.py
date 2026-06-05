@@ -43,7 +43,7 @@ def _print_banner(host: str, port: int) -> None:
     print(sep)
     print(f"  🔒  secret firewall   {_paint('92', 'ON', on)}")
     lm = _paint("92", f"ON · {model}", on) if local else _paint("90", "off — firewall only", on)
-    print(f"  🧠  local model (M4)  {lm}")
+    print(f"  🧠  local model       {lm}")
     print(f"  📋  audit trail       {_paint('90', audit, on)}")
     print(sep)
     print(f"  {_paint('90', 'point Claude Code here:', on)}")
@@ -64,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
 
     audit_cmd = sub.add_parser("audit", help="Inspect the audit trail.")
     audit_cmd.add_argument("--file", default=None, help="Audit log path (default: $EXODUS_AUDIT_LOG)")
+
+    sub.add_parser("selftest", help="Run the masking self-test over every detector kind.")
 
     args = parser.parse_args(argv)
 
@@ -94,6 +96,11 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("(aún no hay nada registrado — usa Exodus y vuelve a mirar)")
         return 0
+
+    if args.command == "selftest":
+        from exodus.selftest import main as run_selftest
+
+        return run_selftest()
 
     parser.print_help()
     return 0

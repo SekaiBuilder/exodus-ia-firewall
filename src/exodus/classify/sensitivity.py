@@ -1,4 +1,4 @@
-"""L2 — Sensitivity classification per span.
+"""Sensitivity classification per span.
 
 Combines deterministic detections, contextual signals (local model), and user
 policy hints into a single sensitivity label per span. Does NOT mutate content.

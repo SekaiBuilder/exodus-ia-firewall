@@ -1,10 +1,10 @@
-"""L1 — Deterministic detection (regex + hard validators).
+"""Deterministic detection (regex + hard validators).
 
-High-precision, CPU-only detectors for secrets and structured PII. Detection ONLY:
+High-precision, CPU-only detectors for secrets and structured PII. Detection only:
 no routing decisions, no content mutation.
 
-Free-text / contextual sensitivity (names, locations, sensitive prose) is NOT regex
-work — that belongs to the local-model layer (L2 / M4). Anything here is a string
+Free-text / contextual sensitivity (names, locations, sensitive prose) is not regex
+work; that belongs to the local-model layer. Anything here is a string
 with a recognizable *signature* or one that passes a *structural check*.
 
 Kinds listed in ``VALIDATORS`` (credit card → Luhn, IBAN → mod-97, DNI/NIE → check
