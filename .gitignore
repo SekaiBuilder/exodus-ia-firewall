@@ -1,0 +1,48 @@
+# --- Secrets & sensitive runtime data (NEVER commit) ---
+.env
+*.vault
+*.vault.json
+vault/
+audit/*.log
+audit/*.jsonl
+*.secret
+
+# --- Inspection log (FULL PLAINTEXT debug — NEVER commit) ---
+inspect/
+*-inspect.jsonl
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+
+# --- Tooling / caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Models / local artifacts ---
+models/
+*.gguf
+*.bin
+
+# --- OS / editor ---
+.DS_Store
+.idea/
+.vscode/
+
+# --- Third-party papers (local reading only; not redistributed — copyright) ---
+paper/prior-art/*.pdf
+
+# --- Private to the author (NOT part of the public release) ---
+# The project black-box dev log stays private; a clean English CHANGELOG can be
+# derived from it later. (esp/ IS published — Spanish mirror; English is primary.)
+BITACORA.md

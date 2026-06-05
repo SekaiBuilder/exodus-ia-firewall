@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "exodus"
+version = "0.0.1"
+description = "Sensitivity-aware privacy routing layer for agentic LLM clients (Claude Code first)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+keywords = ["privacy", "llm", "claude-code", "proxy", "pii", "routing"]
+
+# Core proxy deps (kept light so `pip install -e .` is fast on the M5).
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Detection stack (heavier: pulls spaCy). Install with: pip install -e ".[detect]"
+detect = [
+    "presidio-analyzer>=2.2",
+    "presidio-anonymizer>=2.2",
+]
+# Embedded local model (M4 without Ollama): in-process llama.cpp + HF model download.
+# Install with: pip install -e ".[local]"
+local = [
+    "llama-cpp-python>=0.2.79",
+    "huggingface_hub>=0.23",
+]
+dev = [
+    "pytest>=8.0",
+    "respx>=0.21",   # httpx mocking for upstream tests
+    "ruff>=0.4",
+]
+
+[project.scripts]
+exodus = "exodus.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/exodus"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

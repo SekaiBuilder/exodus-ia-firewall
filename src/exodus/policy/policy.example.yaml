@@ -1,0 +1,47 @@
+# Exodus policy (M3) — you decide what gets protected.
+#
+# Decision chain:   detector kind  ->  tier  ->  action
+# Fail-closed: an unknown kind is treated as SECRET.
+
+# 1) Which detector kind belongs to which sensitivity tier.
+kinds:
+  anthropic_key: SECRET
+  openai_key: SECRET
+  aws_access_key: SECRET
+  github_token: SECRET
+  private_key_block: SECRET
+  generic_bearer: SECRET
+  email: LOW # change to LOW to ALSO pseudonymize emails
+  ipv4: LOW # change to LOW to ALSO pseudonymize IP addresses
+  # --- más claves/tokens (todas SECRET por defecto) ---
+  openai_project_key: SECRET
+  google_api_key: SECRET
+  google_oauth_token: SECRET
+  github_oauth: SECRET
+  github_pat: SECRET
+  slack_token: SECRET
+  slack_webhook: SECRET
+  stripe_key: SECRET
+  sendgrid_key: SECRET
+  npm_token: SECRET
+  jwt: SECRET
+  db_uri_credentials: SECRET
+  # --- PII financiera / identidad (HIGH = se enmascara por defecto) ---
+  credit_card: HIGH
+  iban: HIGH
+  es_dni: HIGH
+  es_nie: HIGH
+  us_ssn: HIGH
+  # --- contacto (PUBLIC = detectado pero reenviado; súbelo a LOW para enmascarar) ---
+  phone_intl: PUBLIC
+
+# 2) What each tier does.
+#    forward      = leave as-is
+#    pseudonymize = reversible placeholder (restored in the response)
+#    block        = non-reversible redaction (the value never comes back)
+tiers:
+  PUBLIC: forward
+  LOW: pseudonymize
+  MEDIUM: pseudonymize # -> 'abstract' (local rewrite) arrives in M4
+  HIGH: pseudonymize # -> 'local'    (local model)   arrives in M4
+  SECRET: pseudonymize # change to 'block' to redact secrets non-reversibly
