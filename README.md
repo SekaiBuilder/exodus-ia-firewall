@@ -82,20 +82,21 @@ claude
 The `WITH EXODUS` status indicator means you're protected.
 
 ### 2b · Codex (OpenAI)
-Run a second Exodus pointed at OpenAI, on another port:
-```bash
-EXODUS_UPSTREAM=https://api.openai.com EXODUS_PORT=8788 exodus serve
-```
-Add a provider in `~/.codex/config.toml`:
-```toml
-[model_providers.exodus]
-name     = "exodus"
-base_url = "http://127.0.0.1:8788/v1"
-env_key  = "OPENAI_API_KEY"
 
-model_provider = "exodus"
+> **Mode matters:** Codex has two authentication modes.
+> - **OAuth login** (`codex login`) — Codex connects directly to OpenAI with its own tokens; `OPENAI_BASE_URL` is ignored. Exodus cannot intercept this mode (same design limitation as GUI desktop apps).
+> - **API key mode** — Codex respects `OPENAI_BASE_URL` and routes through Exodus. Requires a key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
+
+To use Exodus with Codex in API key mode:
+```bash
+# Terminal 1 — start Exodus pointing at OpenAI
+EXODUS_UPSTREAM=https://api.openai.com EXODUS_PORT=8788 exodus serve
+
+# Terminal 2 — launch Codex with your platform.openai.com key
+export OPENAI_API_KEY=sk-...your-key...
+export OPENAI_BASE_URL=http://127.0.0.1:8788/v1
+codex
 ```
-(Works when Codex authenticates with an OpenAI API key.)
 
 ### 3 · See what actually left your machine
 ```bash
