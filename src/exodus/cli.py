@@ -36,9 +36,15 @@ def _print_banner(host: str, port: int) -> None:
     audit = os.getenv("EXODUS_AUDIT_LOG", "audit/exodus.jsonl")
     sep = _paint("90", "  " + "─" * 50, on)
 
+    upstream = os.getenv("EXODUS_UPSTREAM", "").lower()
+    is_openai = "openai" in upstream
+    client_label = "Codex (OpenAI)" if is_openai else CLAUDE_LABEL
+    env_var = "OPENAI_BASE_URL" if is_openai else "ANTHROPIC_BASE_URL"
+    client_hint = "point Codex here:" if is_openai else "point Claude Code here:"
+
     print(_paint("96;1", _ART, on))
     print()
-    print(f"  {_paint('97;1', CLAUDE_LABEL, on)}   {_paint('90', '·', on)}   {_paint('92;1', '🛡  WITH EXODUS', on)}")
+    print(f"  {_paint('97;1', client_label, on)}   {_paint('90', '·', on)}   {_paint('92;1', '🛡  WITH EXODUS', on)}")
     print(f"  {_paint('90', 'privacy router →', on)} {_paint('96', url, on)}")
     print(sep)
     print(f"  🔒  secret firewall   {_paint('92', 'ON', on)}")
@@ -46,8 +52,8 @@ def _print_banner(host: str, port: int) -> None:
     print(f"  🧠  local model       {lm}")
     print(f"  📋  audit trail       {_paint('90', audit, on)}")
     print(sep)
-    print(f"  {_paint('90', 'point Claude Code here:', on)}")
-    print(f"  {_paint('93', f'export ANTHROPIC_BASE_URL={url}', on)}")
+    print(f"  {_paint('90', client_hint, on)}")
+    print(f"  {_paint('93', f'export {env_var}={url}', on)}")
     print()
 
 
