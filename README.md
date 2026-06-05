@@ -1,4 +1,4 @@
-# Exodus 🛡️
+# Exodus IA Firewall 🛡️
 
 > A local, **sensitivity-aware privacy router** for agentic LLM clients — Claude Code and Codex.
 

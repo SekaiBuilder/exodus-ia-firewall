@@ -1,4 +1,4 @@
-# Exodus 🛡️
+# Exodus IA Firewall 🛡️
 
 > Un **enrutador de privacidad local y consciente de la sensibilidad** para clientes LLM
 > agénticos — Claude Code y Codex.
