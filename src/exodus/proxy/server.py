@@ -80,6 +80,9 @@ def create_app() -> FastAPI:
                 inspectlog.inspect_path(),
             )
         app.state.no_restore = os.getenv("EXODUS_NO_RESTORE", "").lower() in _TRUE
+        # Set by `exodus serve --tls`: sha256 fingerprint of the serving certificate,
+        # folded into attestation report_data so the TLS channel is bound to the enclave.
+        app.state.tls_fingerprint = os.getenv("EXODUS_TLS_FINGERPRINT") or None
         if app.state.no_restore:
             _log.warning(
                 "EXODUS_NO_RESTORE is on: responses are not un-masked; the client will see "
@@ -97,12 +100,12 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     @app.get("/_exodus/attest")
-    async def attest_report(nonce: str = "") -> dict:
+    async def attest_report(request: Request, nonce: str = "") -> dict:
         if not (8 <= len(nonce) <= 128):
             raise HTTPException(
                 status_code=400, detail="nonce must be 8-128 characters (use a fresh random value)"
             )
-        return attest.build_report(nonce)
+        return attest.build_report(nonce, request.app.state.tls_fingerprint)
 
     @app.api_route("/{path:path}", methods=_PROXY_METHODS)
     async def proxy(path: str, request: Request) -> StreamingResponse:

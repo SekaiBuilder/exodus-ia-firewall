@@ -80,3 +80,25 @@ def test_parse_quote_offsets():
     parsed = parse_quote(_synthetic_quote(NONCE))
     assert parsed["mr_signer"] == "22" * 32
     assert parsed["report_data"] == expected_report_data(NONCE)
+
+
+def test_channel_binding_required_when_observed():
+    # Verifier saw a TLS cert, but the document does not bind any.
+    doc = attest.build_report(NONCE)
+    v = verify_document(doc, NONCE, allow_simulated=True, channel_binding="ab" * 32)
+    assert v.trusted is False
+    assert any("TLS" in f for f in v.failures)
+
+
+def test_channel_binding_accepted_when_matching():
+    fp = "ab" * 32
+    doc = attest.build_report(NONCE, channel_binding=fp)
+    v = verify_document(doc, NONCE, allow_simulated=True, channel_binding=fp)
+    assert v.trusted is True
+    assert doc["channel_binding"] == fp
+
+
+def test_channel_binding_mismatch_rejected():
+    doc = attest.build_report(NONCE, channel_binding="ab" * 32)
+    v = verify_document(doc, NONCE, allow_simulated=True, channel_binding="cd" * 32)
+    assert v.trusted is False

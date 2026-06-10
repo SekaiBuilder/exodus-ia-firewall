@@ -18,6 +18,7 @@ This document describes what is implemented, how to run it, and — in the spiri
 | Gramine manifest (LibOS wrapping, no code changes) | [`exodus.manifest.template`](../exodus.manifest.template) | working — `gramine-direct` |
 | Attestation endpoint (`GET /_exodus/attest?nonce=…`) | `src/exodus/attest.py` | working — quote on SGX, labeled simulation elsewhere |
 | Verifier client (`exodus verify`) | `src/exodus/verify.py` | working — nonce binding, quote parsing, MRENCLAVE pinning |
+| Attested TLS channel (`exodus serve --tls`) | `src/exodus/tlsbind.py` | working — cert fingerprint folded into report_data (RA-TLS style) |
 
 ```
 relying party                      enclave (Gramine LibOS)
@@ -43,7 +44,16 @@ gramine-direct exodus          # simulation (no SGX hardware needed)
 # from anywhere that can reach the proxy
 exodus verify --allow-simulated            # development
 exodus verify --mrenclave <expected-hex>   # production: pin the build
+
+# attested TLS: the channel itself is bound to the enclave
+exodus serve --tls                         # self-signed cert, fingerprint in report_data
+exodus verify --url https://host:8787 ...  # captures the cert, requires it in the quote
 ```
+
+With `--tls`, certificate validation is *replaced* by attestation binding: a
+man-in-the-middle would present a different certificate, whose fingerprint the
+enclave would never sign into its report_data. This is the RA-TLS pattern —
+trust comes from the silicon, not from a certificate authority.
 
 `exodus verify` exits `0` only when the document passes every check; simulated
 documents are rejected unless `--allow-simulated` is given, so the strict mode is

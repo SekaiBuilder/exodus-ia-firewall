@@ -34,13 +34,19 @@ def attestation_type() -> str:
         return "unavailable"
 
 
-def _report_data_for(nonce: str) -> bytes:
-    """Derive the 64-byte report payload binding the caller's nonce."""
-    digest = hashlib.sha256(nonce.encode("utf-8")).digest()
+def _report_data_for(nonce: str, channel_binding: str | None = None) -> bytes:
+    """Derive the 64-byte report payload binding the caller's nonce.
+
+    With ``channel_binding`` (the TLS certificate fingerprint) the commitment
+    covers both, RA-TLS style: a quote then proves not just *which code* runs,
+    but that the encrypted channel terminates *inside that code*.
+    """
+    payload = nonce if channel_binding is None else f"{nonce}|{channel_binding}"
+    digest = hashlib.sha256(payload.encode("utf-8")).digest()
     return digest.ljust(_REPORT_DATA_SIZE, b"\0")
 
 
-def build_report(nonce: str) -> dict:
+def build_report(nonce: str, channel_binding: str | None = None) -> dict:
     """Produce the attestation document for ``nonce``.
 
     Inside SGX (Gramine with DCAP) the returned ``quote_b64`` is a hardware
@@ -48,12 +54,14 @@ def build_report(nonce: str) -> dict:
     document is explicitly marked ``simulated`` and carries no quote.
     """
     kind = attestation_type()
-    report_data = _report_data_for(nonce)
+    report_data = _report_data_for(nonce, channel_binding)
     doc = {
         "nonce": nonce,
         "report_data": report_data.hex(),
         "attestation_type": kind,
     }
+    if channel_binding is not None:
+        doc["channel_binding"] = channel_binding
 
     if kind == "dcap":
         with open(_REPORT_DATA_PATH, "wb") as fh:

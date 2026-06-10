@@ -67,6 +67,13 @@ def main(argv: list[str] | None = None) -> int:
     serve = sub.add_parser("serve", help="Run the local privacy proxy.")
     serve.add_argument("--host", default=os.getenv("EXODUS_HOST", "127.0.0.1"))
     serve.add_argument("--port", type=int, default=int(os.getenv("EXODUS_PORT", "8787")))
+    serve.add_argument(
+        "--tls",
+        action="store_true",
+        help="Serve HTTPS with a self-signed cert bound into attestation (RA-TLS style).",
+    )
+    serve.add_argument("--certfile", default=None, help="TLS certificate (PEM); implies --tls.")
+    serve.add_argument("--keyfile", default=None, help="TLS private key (PEM); implies --tls.")
 
     audit_cmd = sub.add_parser("audit", help="Inspect the audit trail.")
     audit_cmd.add_argument("--file", default=None, help="Audit log path (default: $EXODUS_AUDIT_LOG)")
@@ -87,10 +94,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "serve":
         import uvicorn
 
+        ssl_args = {}
+        if args.tls or args.certfile or args.keyfile:
+            from exodus.tlsbind import ensure_cert, fingerprint
+
+            certfile, keyfile = ensure_cert(args.certfile, args.keyfile, args.host)
+            os.environ["EXODUS_TLS_FINGERPRINT"] = fingerprint(certfile)
+            ssl_args = {"ssl_certfile": certfile, "ssl_keyfile": keyfile}
+
         from exodus.proxy.server import create_app
 
         _print_banner(args.host, args.port)
-        uvicorn.run(create_app(), host=args.host, port=args.port)
+        uvicorn.run(create_app(), host=args.host, port=args.port, **ssl_args)
         return 0
 
     if args.command == "audit":
