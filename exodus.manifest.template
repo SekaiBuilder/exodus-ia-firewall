@@ -1,0 +1,35 @@
+loader.entrypoint = {uri = "file:{{ gramine.libos }}"}
+libos.entrypoint = "/usr/bin/python3.12"
+loader.log_level = "error"
+loader.argv = ["/usr/bin/python3.12", "/home/codespace/.python/current/bin/exodus", "serve"]
+loader.env.LD_LIBRARY_PATH = "/lib:{{ arch_libdir }}:/usr/lib/x86_64-linux-gnu"
+loader.env.PYTHONPATH = "/workspaces/exodus-ia-firewall/src:/home/codespace/.local/lib/python3.12/site-packages:/usr/local/python/3.12.1/lib/python3.12/site-packages"
+loader.env.HOME = "/home/codespace"
+loader.env.PYTHONDONTWRITEBYTECODE = "1"
+sys.stack.size = "8M"
+sys.brk.max_size = "512M"
+sys.enable_sigterm_injection = true
+
+fs.mounts = [
+  { path = "/lib", uri = "file:{{ gramine.runtimedir() }}" },
+  { path = "{{ arch_libdir }}", uri = "file:{{ arch_libdir }}" },
+  { path = "/usr", uri = "file:/usr" },
+  { path = "/bin", uri = "file:/bin" },
+  { path = "/lib64", uri = "file:/lib64" },
+  { path = "/etc", uri = "file:/etc" },
+  { path = "/tmp", uri = "file:/tmp" },
+  { path = "/home/codespace", uri = "file:/home/codespace" },
+  { path = "/workspaces", uri = "file:/workspaces" },
+]
+
+sgx.allowed_files = [
+  "file:{{ gramine.runtimedir() }}/",
+  "file:/usr/",
+  "file:/bin/",
+  "file:/lib/x86_64-linux-gnu/",
+  "file:/lib64/",
+  "file:/etc/",
+  "file:/tmp/",
+  "file:/home/codespace/",
+  "file:/workspaces/",
+]
