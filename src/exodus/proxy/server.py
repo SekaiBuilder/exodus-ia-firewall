@@ -18,10 +18,10 @@ import uuid
 from collections import Counter
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from exodus import inspectlog
+from exodus import attest, inspectlog
 from exodus.audit import log as audit
 from exodus.policy.policy import Policy
 from exodus.transform.pipeline import contextual_pass, sanitize_request_body
@@ -95,6 +95,14 @@ def create_app() -> FastAPI:
     @app.get("/_exodus/health")
     async def health() -> dict:
         return {"status": "ok"}
+
+    @app.get("/_exodus/attest")
+    async def attest_report(nonce: str = "") -> dict:
+        if not (8 <= len(nonce) <= 128):
+            raise HTTPException(
+                status_code=400, detail="nonce must be 8-128 characters (use a fresh random value)"
+            )
+        return attest.build_report(nonce)
 
     @app.api_route("/{path:path}", methods=_PROXY_METHODS)
     async def proxy(path: str, request: Request) -> StreamingResponse:
