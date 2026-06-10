@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Tests](https://img.shields.io/badge/tests-63%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-66%20passing-brightgreen)
 ![Status](https://img.shields.io/badge/status-working-success)
 
 **🌐 English (primary)** · [Español](esp/README.md)
@@ -200,7 +200,7 @@ Copy `.env.example` → `.env`. Key variables:
 
 ## Tests
 ```bash
-pip install -e ".[dev]" && pytest        # 63 passing
+pip install -e ".[dev]" && pytest        # 66 passing
 ```
 
 ---
