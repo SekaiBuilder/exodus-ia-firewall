@@ -73,6 +73,15 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("selftest", help="Run the masking self-test over every detector kind.")
 
+    verify_cmd = sub.add_parser("verify", help="Verify a running proxy's attestation.")
+    verify_cmd.add_argument("--url", default="http://127.0.0.1:8787", help="Proxy base URL.")
+    verify_cmd.add_argument("--mrenclave", default=None, help="Pin an expected MRENCLAVE (hex).")
+    verify_cmd.add_argument(
+        "--allow-simulated",
+        action="store_true",
+        help="Accept simulated documents (development without SGX hardware).",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "serve":
@@ -107,6 +116,21 @@ def main(argv: list[str] | None = None) -> int:
         from exodus.selftest import main as run_selftest
 
         return run_selftest()
+
+    if args.command == "verify":
+        from exodus.verify import verify_url
+
+        v = verify_url(args.url, args.mrenclave, args.allow_simulated)
+        print(f"Exodus attestation — {args.url}  (tee: {v.tee})")
+        for line in v.checks:
+            print(f"  ✓ {line}")
+        for line in v.failures:
+            print(f"  ✗ {line}")
+        if v.mr_enclave:
+            print(f"  MRENCLAVE: {v.mr_enclave}")
+            print(f"  MRSIGNER:  {v.mr_signer}")
+        print(f"VERDICT: {'TRUSTED' if v.trusted else 'NOT TRUSTED'}")
+        return 0 if v.trusted else 1
 
     parser.print_help()
     return 0
