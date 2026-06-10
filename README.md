@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Tests](https://img.shields.io/badge/tests-66%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen)
 ![Status](https://img.shields.io/badge/status-working-success)
 
 **🌐 English (primary)** · [Español](esp/README.md)
@@ -200,7 +200,7 @@ Copy `.env.example` → `.env`. Key variables:
 
 ## Tests
 ```bash
-pip install -e ".[dev]" && pytest        # 66 passing
+pip install -e ".[dev]" && pytest        # 73 passing
 ```
 
 ---
@@ -219,6 +219,28 @@ exodus verify --allow-simulated    # attestation handshake (nonce → report →
 On SGX hardware the same manifest runs with `gramine-sgx` and `/_exodus/attest` returns a
 hardware quote; `exodus verify --mrenclave <hex>` pins the exact build. Details, honest
 scope and limits: [`docs/TEE.md`](docs/TEE.md).
+
+---
+
+## MCP server (agent integration)
+
+Exodus speaks the [Model Context Protocol](https://modelcontextprotocol.io): any MCP
+client (Claude Code, Claude Desktop, custom agents) can use the firewall as a set of tools.
+
+```bash
+claude mcp add exodus -- exodus mcp     # register with Claude Code
+```
+
+| Tool | What it does |
+|---|---|
+| `exodus_mask` | mask secrets/PII in a text before it travels anywhere |
+| `exodus_verify` | attestation handshake against a running proxy — *can this gateway be trusted?* |
+| `exodus_audit` | what has been masked so far (kinds and counts, never the values) |
+
+The interesting one is `exodus_verify`: it gives agents a primitive to **check the
+privacy gateway before routing secrets through it** — nonce freshness, attestation
+binding, TLS channel binding and MRENCLAVE pinning, straight from the agent loop
+(see [`docs/TEE.md`](docs/TEE.md)).
 
 ---
 

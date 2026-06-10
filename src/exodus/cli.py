@@ -80,6 +80,8 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("selftest", help="Run the masking self-test over every detector kind.")
 
+    sub.add_parser("mcp", help="Serve Exodus tools over the Model Context Protocol (stdio).")
+
     verify_cmd = sub.add_parser("verify", help="Verify a running proxy's attestation.")
     verify_cmd.add_argument("--url", default="http://127.0.0.1:8787", help="Proxy base URL.")
     verify_cmd.add_argument("--mrenclave", default=None, help="Pin an expected MRENCLAVE (hex).")
@@ -131,6 +133,11 @@ def main(argv: list[str] | None = None) -> int:
         from exodus.selftest import main as run_selftest
 
         return run_selftest()
+
+    if args.command == "mcp":
+        from exodus.mcp_server import main as run_mcp
+
+        return run_mcp()
 
     if args.command == "verify":
         from exodus.verify import verify_url

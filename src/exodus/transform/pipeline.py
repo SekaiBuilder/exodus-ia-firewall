@@ -115,3 +115,16 @@ def contextual_pass(body: bytes, runtime, min_tier: Sensitivity = Sensitivity.ME
     if not changed:
         return body, statuses
     return json.dumps(obj, ensure_ascii=False).encode("utf-8"), statuses
+
+
+def mask_text(text: str, policy: Policy | None = None):
+    """Mask a plain-text string. Returns ``(masked, vault, applied)``.
+
+    Same deterministic firewall as the proxy path, exposed for callers that
+    hold text rather than a JSON request body (e.g. the MCP server).
+    """
+    policy = policy or Policy.default()
+    vault = Vault()
+    applied: list[tuple[str, str]] = []
+    masked = _transform(text, policy, vault, applied)
+    return masked, vault, applied
