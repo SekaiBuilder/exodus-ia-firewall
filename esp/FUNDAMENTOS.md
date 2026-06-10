@@ -7,6 +7,9 @@
 **Mantenido por:** Francesco Catania (@sekaibuilder)
 **Estado:** en funcionamiento — hitos M0–M4 completos.
 
+> 🆕 **Continuación:** [EXODUS-2.0.md](EXODUS-2.0.md) — el firewall dentro de un enclave
+> (TEE/SGX): Gramine, attestation, RA-TLS y MCP. Teoría + tutorial completo.
+
 ---
 
 ## 1. Planteamiento del problema y motivación
