@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Tests](https://img.shields.io/badge/tests-51%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-63%20passing-brightgreen)
 ![Status](https://img.shields.io/badge/status-working-success)
 
 **🌐 English (primary)** · [Español](esp/README.md)
@@ -200,8 +200,25 @@ Copy `.env.example` → `.env`. Key variables:
 
 ## Tests
 ```bash
-pip install -e ".[dev]" && pytest        # 51 passing
+pip install -e ".[dev]" && pytest        # 63 passing
 ```
+
+---
+
+## Run it inside a TEE (Gramine / Intel SGX)
+
+The vault can be protected even from the machine's root user by running Exodus inside
+an SGX enclave via [Gramine](https://gramineproject.io) — no code changes, one manifest:
+
+```bash
+gramine-manifest -Darch_libdir=/lib/x86_64-linux-gnu exodus.manifest.template exodus.manifest
+gramine-direct exodus              # simulation, any x86_64 Linux
+exodus verify --allow-simulated    # attestation handshake (nonce → report → verdict)
+```
+
+On SGX hardware the same manifest runs with `gramine-sgx` and `/_exodus/attest` returns a
+hardware quote; `exodus verify --mrenclave <hex>` pins the exact build. Details, honest
+scope and limits: [`docs/TEE.md`](docs/TEE.md).
 
 ---
 
