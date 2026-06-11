@@ -1,6 +1,8 @@
-# Exodus IA Firewall 🛡️
+# 🛡️ Exodus — the privacy firewall for AI coding agents
 
-> A local, **sensitivity-aware privacy router** for agentic LLM clients — Claude Code and Codex.
+> Claude Code and Codex ship your prompts to the cloud — and sometimes your API keys,
+> credit cards and personal data go along for the ride. **Exodus masks them before they
+> leave your machine** and restores them in the reply, so your tools never notice.
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
@@ -9,9 +11,11 @@
 
 **🌐 English (primary)** · [Español](esp/README.md)
 
-Exodus runs on your own machine, between your AI coding agent and the cloud API, and
-**minimizes the sensitive data that leaves it** — masking secrets and PII *before* they
-are sent, and restoring them transparently in the response so your tools keep working.
+<p align="center">
+  <img src="docs/assets/demo-firewall.gif" alt="A request containing an API key and a credit card goes through Exodus: the reply comes back intact, but the cloud only ever saw placeholders" width="900">
+</p>
+<p align="center"><sub>Real session, no edits: the reply comes back intact — but the cloud only ever saw
+<code>⟪EXODUS:anthropic_key:1⟫</code>. Reproduce it yourself from <a href="docs/demo/">docs/demo/</a>.</sub></p>
 
 ---
 
@@ -39,11 +43,21 @@ trusting Exodus with anything.**
 
 ## How it works
 
-```
-Claude Code / Codex ──► 🛡 Exodus (localhost) ──► api.anthropic.com / api.openai.com
-   set *_BASE_URL          │  detect → policy → mask (reversible) → forward
-                           └─ real values stay in a local in-memory vault;
-   restored response  ◄────── placeholders restored on the way back
+```mermaid
+flowchart LR
+    subgraph machine["🖥️ Your machine"]
+        client["Claude Code / Codex<br>*_BASE_URL → localhost"]
+        exodus["🛡️ Exodus<br>detect → policy → mask"]
+        vault[("in-memory vault<br>real values never leave")]
+    end
+    subgraph cloud["☁️ Cloud"]
+        api["api.anthropic.com<br>api.openai.com"]
+    end
+    client -- "request (plaintext)" --> exodus
+    exodus -- "request (masked ⟪EXODUS:kind:N⟫)" --> api
+    api -- "response (masked)" --> exodus
+    exodus -- "response (restored)" --> client
+    exodus <-.-> vault
 ```
 
 Your client honors a base-URL env var (`ANTHROPIC_BASE_URL`, `OPENAI_BASE_URL`). Point it at
@@ -141,23 +155,7 @@ outgoing request, and the local vault restores the original bytes exactly.
 exodus selftest
 ```
 
-```text
-  Exodus self-test — every detector kind on synthetic data
-  26 kinds · 23 masked by default · 3 detected/opt-in · every value is FAKE
-
-  KIND                 EXAMPLE (fake)             DEFAULT  WHAT THE CLOUD SEES          STATUS
-  ──────────────────────────────────────────────────────────────────────────────────────────
-  anthropic_key        sk-ant-api03-FAKEdemoEXOD… mask     ⟪EXODUS:anthropic_key:1⟫     ✓ masked · restored
-  aws_access_key       AKIAFAKEDEMO0123ABCD       mask     ⟪EXODUS:aws_access_key:1⟫    ✓ masked · restored
-  github_pat           github_pat_FAKEdemoEXODUS… mask     ⟪EXODUS:github_pat:1⟫        ✓ masked · restored
-  credit_card          4242 4242 4242 4242        mask     ⟪EXODUS:credit_card:1⟫       ✓ masked · restored
-  iban                 DE89 3704 0044 0532 0130 … mask     ⟪EXODUS:iban:1⟫              ✓ masked · restored
-  us_ssn               123-45-6789                mask     ⟪EXODUS:us_ssn:1⟫            ✓ masked · restored
-  email                alice@example.com          forward  alice@example.com            · detected · opt-in
-  …                                                                          (26 kinds total)
-
-  PASS  23/23 protected values masked and restored exactly · 0 leaked to egress
-```
+![exodus selftest — all 26 detector kinds on synthetic data: 23 masked and restored exactly, 0 leaked to egress](docs/assets/demo-selftest.gif)
 
 Every value is synthetic (documented test tokens, reserved-for-docs identifiers). The same
 matrix runs in the test suite, so adding a detector without coverage fails the tests.
@@ -215,6 +213,8 @@ gramine-manifest -Darch_libdir=/lib/x86_64-linux-gnu exodus.manifest.template ex
 gramine-direct exodus              # simulation, any x86_64 Linux
 exodus verify --allow-simulated    # attestation handshake (nonce → report → verdict)
 ```
+
+![exodus verify — fresh nonce, attestation report checks, VERDICT: TRUSTED](docs/assets/demo-verify.gif)
 
 On SGX hardware the same manifest runs with `gramine-sgx` and `/_exodus/attest` returns a
 hardware quote; `exodus verify --mrenclave <hex>` pins the exact build. Details, honest

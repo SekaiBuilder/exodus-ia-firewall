@@ -1,10 +1,17 @@
-# Exodus IA Firewall 🛡️
+# 🛡️ Exodus — el cortafuegos de privacidad para agentes de IA
 
-> Un **enrutador de privacidad local y consciente de la sensibilidad** para clientes LLM
-> agénticos — Claude Code y Codex.
+> Claude Code y Codex mandan tus prompts a la nube — y a veces se llevan de paso tus claves
+> API, tarjetas y datos personales. **Exodus los enmascara antes de que salgan de tu máquina**
+> y los restaura en la respuesta, sin que tus herramientas se enteren.
 
-**Licencia:** MIT · **Estado:** funcional · 51 tests en verde · **Idioma:** la versión
+**Licencia:** MIT · **Estado:** funcional · 73 tests en verde · **Idioma:** la versión
 **canónica es la inglesa** → [`README.md`](../README.md).
+
+<p align="center">
+  <img src="../docs/assets/demo-firewall.gif" alt="Una petición con una clave API y una tarjeta pasa por Exodus: la respuesta vuelve intacta, pero la nube solo vio placeholders" width="900">
+</p>
+<p align="center"><sub>Sesión real, sin retoques: la respuesta vuelve intacta — pero la nube solo vio
+<code>⟪EXODUS:anthropic_key:1⟫</code>. Reproducible desde <a href="../docs/demo/">docs/demo/</a>.</sub></p>
 
 Exodus corre en tu propia máquina, entre tu agente de IA y la API en la nube, y **minimiza
 los datos sensibles que salen** — enmascara secretos y PII *antes* de enviarlos, y los

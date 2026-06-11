@@ -46,3 +46,7 @@ paper/prior-art/*.pdf
 # The project black-box dev log stays private; a clean English CHANGELOG can be
 # derived from it later. (esp/ IS published — Spanish mirror; English is primary.)
 BITACORA.md
+
+# --- Demo recordings: generated at record time, never committed ---
+docs/demo/cloud.log
+docs/demo/audit/
