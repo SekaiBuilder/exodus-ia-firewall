@@ -8,7 +8,7 @@
 ```
 proyecto-exodus/
 ├── README.md                      # (1)  Punto de entrada público
-├── LICENSE                        # (2)  MIT
+├── LICENSE                        # (2)  Apache-2.0
 ├── .gitignore                     # (3)  Ignora secretos, bóveda, cachés
 ├── pyproject.toml                 # (4)  Empaquetado + dependencias + tooling
 ├── .env.example                   # (5)  Plantilla de configuración

@@ -4,7 +4,7 @@
 > API, tarjetas y datos personales. **Exodus los enmascara antes de que salgan de tu máquina**
 > y los restaura en la respuesta, sin que tus herramientas se enteren.
 
-**Licencia:** MIT · **Estado:** beta pública · 73 tests en verde · **Idioma:** la versión
+**Licencia:** Apache-2.0 · **Estado:** beta pública · 73 tests en verde · **Idioma:** la versión
 **canónica es la inglesa** → [`README.md`](../README.md).
 
 > 🧪 **Beta pública.** El proxy local (Parte 1) ya funciona — es justo lo que muestra la demo
@@ -138,7 +138,9 @@ Fundamentos: [`FUNDAMENTOS.md`](FUNDAMENTOS.md) · Arquitectura: [`ARQUITECTURA.
 · **README principal (inglés):** [`../README.md`](../README.md) · Seguridad: [`../SECURITY.md`](../SECURITY.md)
 
 ## Licencia
-MIT © Francesco Catania (@sekaibuilder). Ver [`../LICENSE`](../LICENSE).
+Apache-2.0 © 2026 Francesco Catania (@sekaibuilder). Ver [`../LICENSE`](../LICENSE).
+Apache-2.0 es permisiva (libre para cualquier uso, incluido comercial) y añade una concesión
+explícita de patentes — apropiada para código de seguridad y attestation.
 
 ## Aviso
 Exodus es una herramienta de **reducción de daño**, no una garantía de anonimato. Reduce los

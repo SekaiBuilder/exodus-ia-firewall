@@ -4,7 +4,7 @@
 > credit cards and personal data go along for the ride. **Exodus masks them before they
 > leave your machine** and restores them in the reply, so your tools never notice.
 
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen)
 ![Release](https://img.shields.io/badge/release-public%20beta-orange)
@@ -264,7 +264,9 @@ Structure: [`docs/ESTRUCTURA.md`](docs/ESTRUCTURA.md) · Roadmap: [`docs/ROADMAP
 · Contributing: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 
 ## License
-MIT © Francesco Catania ([@sekaibuilder](https://github.com/sekaibuilder)). See [`LICENSE`](LICENSE).
+Apache-2.0 © 2026 Francesco Catania ([@sekaibuilder](https://github.com/sekaibuilder)). See [`LICENSE`](LICENSE).
+Apache-2.0 is permissive (free for any use, including commercial) and adds an explicit patent
+grant — a good fit for security and attestation code.
 
 ## Disclaimer
 Exodus is a **harm-reduction** tool, not a guarantee of anonymity. It reduces the sensitive
