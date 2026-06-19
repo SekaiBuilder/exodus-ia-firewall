@@ -7,9 +7,15 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen)
-![Status](https://img.shields.io/badge/status-working-success)
+![Release](https://img.shields.io/badge/release-public%20beta-orange)
 
 **🌐 English (primary)** · [Español](esp/README.md)
+
+> 🧪 **Public beta.** The local proxy (Part 1) works today — that's exactly what the demo
+> below shows, and what the test suite covers. Running it sealed inside an Intel SGX enclave
+> with verifiable attestation (Part 2) is built and runs in simulation; real-silicon
+> validation is in progress — see [`docs/RUN-ON-SGX.md`](docs/RUN-ON-SGX.md). Bug reports and
+> feedback are very welcome — [open an issue](https://github.com/SekaiBuilder/exodus-ia-firewall/issues).
 
 <p align="center">
   <img src="docs/assets/demo-firewall.gif" alt="A request containing an API key and a credit card goes through Exodus: the reply comes back intact, but the cloud only ever saw placeholders" width="900">

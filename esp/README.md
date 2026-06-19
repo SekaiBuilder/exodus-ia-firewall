@@ -4,8 +4,13 @@
 > API, tarjetas y datos personales. **Exodus los enmascara antes de que salgan de tu máquina**
 > y los restaura en la respuesta, sin que tus herramientas se enteren.
 
-**Licencia:** MIT · **Estado:** funcional · 73 tests en verde · **Idioma:** la versión
+**Licencia:** MIT · **Estado:** beta pública · 73 tests en verde · **Idioma:** la versión
 **canónica es la inglesa** → [`README.md`](../README.md).
+
+> 🧪 **Beta pública.** El proxy local (Parte 1) ya funciona — es justo lo que muestra la demo
+> de abajo y lo que cubren los tests. Correrlo sellado dentro de un enclave Intel SGX con
+> attestation verificable (Parte 2) está construido y corre en simulación; la validación sobre
+> silicio real está en curso — ver [`docs/RUN-ON-SGX.md`](../docs/RUN-ON-SGX.md).
 
 <p align="center">
   <img src="../docs/assets/demo-firewall.gif" alt="Una petición con una clave API y una tarjeta pasa por Exodus: la respuesta vuelve intacta, pero la nube solo vio placeholders" width="900">

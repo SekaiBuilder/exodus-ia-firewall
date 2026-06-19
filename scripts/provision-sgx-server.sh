@@ -88,5 +88,5 @@ gramine-sgx-sign --manifest exodus.manifest --output exodus.manifest.sgx
 echo "== [7/7] Smoke test =="
 ls -l /dev/sgx_enclave /dev/sgx_provision 2>/dev/null || echo "NOTE: /dev/sgx_* missing — check BIOS/driver."
 echo "Run:  cd $REPO && gramine-sgx exodus   (serves on :8787)"
-echo "Then from your Mac:  exodus verify https://SERVER:8787 --mrenclave <value printed by gramine-sgx-sign>"
+echo "Then from your Mac:  exodus verify --url http://SERVER:8787 --mrenclave <mr_enclave printed by gramine-sgx-sign>"
 echo "Provision complete."
