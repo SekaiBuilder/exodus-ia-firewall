@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 DEFAULT_PATH = "inspect/exodus-inspect.jsonl"
 
@@ -37,7 +37,7 @@ def record(request_id: str, you_wrote, sent_to_cloud, received_back, path: str |
     if directory:
         os.makedirs(directory, exist_ok=True)
     rec = {
-        "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "ts": datetime.now(UTC).isoformat(timespec="seconds"),
         "request_id": request_id,
         "you_wrote": _txt(you_wrote),
         "sent_to_cloud": _txt(sent_to_cloud),

@@ -3,11 +3,14 @@
 > Ship a real, honest artifact early; layer the research-grade differentiators on top.
 > A milestone is **done** only when its invariants and tests pass.
 
-## M0 — Foundations ✅ (in progress)
+## M0 — Foundations ✅ DONE
 - [x] Repository scaffold, theory, structure, architecture diagrams
 - [x] Threat model and paper base
 - [x] `pyproject.toml` resolves; `pip install -e .` works
-- [ ] CI: lint (ruff) + `pytest` green
+- [x] CI: lint (ruff) + `pytest` green — `.github/workflows/ci.yml`, on 3.11 and 3.13.
+      The clean-clone install is a CI step, so the line above stays honest.
+      The lint rule set is pinned in `pyproject.toml`; `BLE001` is deliberately off
+      because fail-closed (INV-4) *requires* the blind `except Exception` catches.
 
 ## M1 — Transparent proxy (no privacy logic yet) ✅ DONE (unit + live e2e)
 **Goal:** Claude Code works *through* Exodus with zero behavior change.

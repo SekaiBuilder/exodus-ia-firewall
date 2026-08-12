@@ -50,3 +50,8 @@ BITACORA.md
 # --- Demo recordings: generated at record time, never committed ---
 docs/demo/cloud.log
 docs/demo/audit/
+
+# Local tooling: editor config, code index, git worktrees
+.claude/
+.codegraph/
+.worktrees/

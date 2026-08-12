@@ -4,6 +4,7 @@
 > credit cards and personal data go along for the ride. **Exodus masks them before they
 > leave your machine** and restores them in the reply, so your tools never notice.
 
+[![CI](https://github.com/SekaiBuilder/exodus-ia-firewall/actions/workflows/ci.yml/badge.svg)](https://github.com/SekaiBuilder/exodus-ia-firewall/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen)

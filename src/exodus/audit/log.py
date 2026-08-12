@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 DEFAULT_PATH = "audit/exodus.jsonl"
 
@@ -26,8 +26,8 @@ class AuditRecord:
     action: str       # "pseudonymize" | "block"
 
     @classmethod
-    def now(cls, request_id: str, kind: str, action: str) -> "AuditRecord":
-        ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    def now(cls, request_id: str, kind: str, action: str) -> AuditRecord:
+        ts = datetime.now(UTC).isoformat(timespec="seconds")
         return cls(ts=ts, request_id=request_id, kind=kind, action=action)
 
 

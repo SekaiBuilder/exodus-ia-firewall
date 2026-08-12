@@ -73,11 +73,11 @@ class Policy:
         return self.tier_actions.get(tier, Action.BLOCK)       # unknown tier -> BLOCK (fail-closed)
 
     @classmethod
-    def default(cls) -> "Policy":
+    def default(cls) -> Policy:
         return cls()
 
     @classmethod
-    def from_yaml(cls, path: str) -> "Policy":
+    def from_yaml(cls, path: str) -> Policy:
         with open(path, encoding="utf-8") as fh:
             data = yaml.safe_load(fh) or {}
         kind_tiers = dict(_DEFAULT_KIND_TIERS)

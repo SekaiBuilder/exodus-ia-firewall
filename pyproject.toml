@@ -48,6 +48,21 @@ packages = ["src/exodus"]
 line-length = 100
 target-version = "py311"
 
+# The rule set is pinned explicitly on purpose. Ruff's *implicit* defaults grow with
+# each release, so relying on them makes CI turn red on an unrelated ruff upgrade
+# rather than on a change of ours.
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "UP"]
+ignore = [
+    # Action is compared, never str()-ed, but the audit trail writes an action string.
+    # Migrating to StrEnum changes str()/format() output, so it is not a lint-time call.
+    "UP042",
+]
+
+# BLE001 (blind `except Exception`) is deliberately NOT selected. Fail-closed is the
+# design: on any local-model or transform failure Exodus blocks instead of forwarding
+# the raw value (INV-4). Those catches are the invariant, not an oversight.
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
