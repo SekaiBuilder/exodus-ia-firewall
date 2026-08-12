@@ -55,3 +55,6 @@ docs/demo/audit/
 .claude/
 .codegraph/
 .worktrees/
+
+# Icono personalizado de carpeta (macOS)
+Icon?
