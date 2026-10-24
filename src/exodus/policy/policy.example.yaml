@@ -15,10 +15,12 @@ kinds:
   ipv4: LOW # change to LOW to ALSO pseudonymize IP addresses
   # --- más claves/tokens (todas SECRET por defecto) ---
   openai_project_key: SECRET
+  huggingface_token: SECRET
   google_api_key: SECRET
   google_oauth_token: SECRET
   github_oauth: SECRET
   github_pat: SECRET
+  gitlab_token: SECRET
   slack_token: SECRET
   slack_webhook: SECRET
   stripe_key: SECRET

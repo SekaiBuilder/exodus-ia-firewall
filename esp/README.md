@@ -4,7 +4,7 @@
 > API, tarjetas y datos personales. **Exodus los enmascara antes de que salgan de tu máquina**
 > y los restaura en la respuesta, sin que tus herramientas se enteren.
 
-**Licencia:** Apache-2.0 · **Estado:** beta pública · 73 tests en verde · **Idioma:** la versión
+**Licencia:** Apache-2.0 · **Estado:** beta pública · 74 tests en verde · **Idioma:** la versión
 **canónica es la inglesa** → [`README.md`](../README.md).
 
 > 🧪 **Beta pública.** El proxy local (Parte 1) ya funciona — es justo lo que muestra la demo
@@ -97,16 +97,16 @@ exodus selftest
 ```
 
 ```text
-  26 kinds · 23 masked by default · 3 detected/opt-in · every value is FAKE
+  28 kinds · 25 masked by default · 3 detected/opt-in · every value is FAKE
 
   anthropic_key   sk-ant-api03-FAKEdemoEXOD…  mask     ⟪EXODUS:anthropic_key:1⟫   ✓ masked · restored
   credit_card     4242 4242 4242 4242         mask     ⟪EXODUS:credit_card:1⟫     ✓ masked · restored
   iban            DE89 3704 0044 0532 0130 …  mask     ⟪EXODUS:iban:1⟫            ✓ masked · restored
   us_ssn          123-45-6789                 mask     ⟪EXODUS:us_ssn:1⟫          ✓ masked · restored
   email           alice@example.com           forward  alice@example.com          · detectado · opt-in
-  …                                                                  (26 tipologías en total)
+  …                                                                  (28 tipologías en total)
 
-  PASS  23/23 valores protegidos enmascarados y restaurados exactos · 0 filtrados
+  PASS  25/25 valores protegidos enmascarados y restaurados exactos · 0 filtrados
 ```
 
 Todos los valores son sintéticos (tokens de test documentados, identificadores reservados

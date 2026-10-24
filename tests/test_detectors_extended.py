@@ -21,6 +21,17 @@ def test_more_api_keys_and_tokens():
     assert "jwt" in _kinds(f"token {jwt}")
 
 
+
+def test_current_key_formats():
+    # Formats issued after the first detector set; each one used to leak unmasked.
+    assert "openai_project_key" in _kinds("sk-svcacct-" + "A1b2_C3d4-" * 8)
+    assert "openai_project_key" in _kinds("sk-admin-" + "A1b2C3d4E5" * 6)
+    assert "aws_access_key" in _kinds("aws ASIA" + "IOSFODNN7EXAMPLE")
+    assert "gitlab_token" in _kinds("glpat-" + "x1Y2z3W4v5U6t7S8r9Q0")
+    assert "huggingface_token" in _kinds("HF_TOKEN=hf_" + "abcdefghij" * 3 + "abcd")
+    assert "stripe_key" in _kinds("rk_prod_" + "a1B2c3D4e5" * 3)
+    assert "private_key_block" in _kinds("-----BEGIN ENCRYPTED PRIVATE KEY-----")
+
 def test_credit_card_luhn():
     assert "credit_card" in _kinds("pago con 4111 1111 1111 1111 gracias")   # valid Luhn (Visa test)
     assert "credit_card" not in _kinds("ref 1111 1111 1111 1111")             # fails Luhn

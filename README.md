@@ -7,7 +7,7 @@
 [![CI](https://github.com/SekaiBuilder/exodus-ia-firewall/actions/workflows/ci.yml/badge.svg)](https://github.com/SekaiBuilder/exodus-ia-firewall/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
-![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-74%20passing-brightgreen)
 ![Release](https://img.shields.io/badge/release-public%20beta-orange)
 
 **🌐 English (primary)** · [Español](esp/README.md)
@@ -205,7 +205,7 @@ Copy `.env.example` → `.env`. Key variables:
 
 ## Tests
 ```bash
-pip install -e ".[dev]" && pytest        # 73 passing
+pip install -e ".[dev]" && pytest        # 74 passing
 ```
 
 ---

@@ -31,24 +31,30 @@ SECRET_PATTERNS: dict[str, re.Pattern] = {
     # LLM / AI providers
     "anthropic_key": re.compile(r"sk-ant-[A-Za-z0-9\-_]{20,}"),
     "openai_key": re.compile(r"sk-[A-Za-z0-9]{20,}"),
-    "openai_project_key": re.compile(r"sk-proj-[A-Za-z0-9\-_]{20,}"),
+    # Current OpenAI formats: project, service-account and admin keys.
+    "openai_project_key": re.compile(r"sk-(?:proj|svcacct|admin)-[A-Za-z0-9\-_]{20,}"),
+    "huggingface_token": re.compile(r"\b(?:hf|api_org)_[A-Za-z0-9]{30,}"),
     # Cloud providers
-    "aws_access_key": re.compile(r"AKIA[0-9A-Z]{16}"),
+    # AKIA = long-lived, ASIA = temporary STS credentials (plus the rarer prefixes).
+    "aws_access_key": re.compile(r"(?:AKIA|ASIA|ABIA|ACCA|A3T[A-Z0-9])[0-9A-Z]{16}"),
     "google_api_key": re.compile(r"AIza[0-9A-Za-z\-_]{35}"),
     "google_oauth_token": re.compile(r"ya29\.[0-9A-Za-z\-_]{20,}"),
     # Source control
     "github_token": re.compile(r"ghp_[A-Za-z0-9]{36}"),
     "github_oauth": re.compile(r"gh[ousr]_[A-Za-z0-9]{36,}"),
     "github_pat": re.compile(r"github_pat_[0-9A-Za-z_]{82}"),
+    "gitlab_token": re.compile(
+        r"\bgl(?:pat|dt|rt|ptt|cbt|soat|oas|agent|ft|imt|ffct)-[0-9A-Za-z_\-.]{20,}"
+    ),
     # SaaS
     "slack_token": re.compile(r"xox[baprs]-[0-9A-Za-z-]{10,}"),
     "slack_webhook": re.compile(r"https://hooks\.slack\.com/services/[A-Za-z0-9/_+\-]+"),
-    "stripe_key": re.compile(r"(?:sk|rk)_(?:live|test)_[0-9A-Za-z]{24,}"),
+    "stripe_key": re.compile(r"(?:sk|rk)_(?:live|test|prod)_[0-9A-Za-z]{24,}"),
     "sendgrid_key": re.compile(r"SG\.[A-Za-z0-9_\-]{22}\.[A-Za-z0-9_\-]{43}"),
     "npm_token": re.compile(r"npm_[0-9A-Za-z]{36}"),
     # Generic / structural
     "jwt": re.compile(r"\beyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}"),
-    "private_key_block": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----"),
+    "private_key_block": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP |ENCRYPTED )?PRIVATE KEY-----"),
     "generic_bearer": re.compile(r"(?i)bearer\s+[A-Za-z0-9\-_.=]{16,}"),
     "db_uri_credentials": re.compile(
         r"(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis|amqp)://[^:@\s/]+:[^@\s/]+@[^\s/]+"
