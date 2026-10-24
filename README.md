@@ -162,7 +162,7 @@ outgoing request, and the local vault restores the original bytes exactly.
 exodus selftest
 ```
 
-![exodus selftest — all 26 detector kinds on synthetic data: 23 masked and restored exactly, 0 leaked to egress](docs/assets/demo-selftest.gif)
+![exodus selftest — all 28 detector kinds on synthetic data: 25 masked and restored exactly, 0 leaked to egress](docs/assets/demo-selftest.gif)
 
 Every value is synthetic (documented test tokens, reserved-for-docs identifiers). The same
 matrix runs in the test suite, so adding a detector without coverage fails the tests.

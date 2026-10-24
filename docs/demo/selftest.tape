@@ -7,7 +7,7 @@ Output ../assets/demo-selftest.gif
 Set Shell "bash"
 Set FontSize 15
 Set Width 1280
-Set Height 880
+Set Height 940
 Set Padding 16
 Set Theme "Catppuccin Mocha"
 Set TypingSpeed 30ms
